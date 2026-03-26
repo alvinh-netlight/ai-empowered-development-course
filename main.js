@@ -12,7 +12,20 @@ document.addEventListener('DOMContentLoaded', () => {
     initVibeKanban();
 });
 
+function saveTodos() {
+    localStorage.setItem('todos', JSON.stringify(todos));
+    localStorage.setItem('nextId', String(nextId));
+}
+
+function loadTodos() {
+    const stored = localStorage.getItem('todos');
+    todos = stored ? JSON.parse(stored) : [];
+    nextId = parseInt(localStorage.getItem('nextId') || '1', 10);
+}
+
 function init() {
+    loadTodos();
+
     // Wire up add button
     const addBtn = document.getElementById('addBtn');
     const todoInput = document.getElementById('todoInput');
@@ -50,6 +63,7 @@ function addTodo() {
     });
 
     input.value = '';
+    saveTodos();
     renderTodos();
 }
 
@@ -57,12 +71,14 @@ function toggleTodo(id) {
     const todo = todos.find(t => t.id === id);
     if (todo) {
         todo.completed = !todo.completed;
+        saveTodos();
         renderTodos();
     }
 }
 
 function deleteTodo(id) {
     todos = todos.filter(t => t.id !== id);
+    saveTodos();
     renderTodos();
 }
 
